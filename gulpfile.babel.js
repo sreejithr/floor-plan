@@ -12,7 +12,7 @@ import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
 import babelify from 'babelify';
 
-gulp.task('default', ['jshint', 'build-js', 'build-sass', 'watch']);
+gulp.task('default', ['jshint', 'build-js', 'build-sass']);
 
 gulp.task('jshint', () => {
   return gulp.src('source/js/**/*.js')
@@ -29,11 +29,6 @@ gulp.task('build-sass', () => {
 });
 
 gulp.task('build-js', () => {
- // browserify('./source/js/app.js')
- //    .transform(babelify, {sourceMaps: true})
- //    .bundle()
- //    .pipe(source('bundle.js'))
- //    .pipe(buffer())
   return gulp.src('source/js/**/*.js')
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(concat('bundle.js'))
