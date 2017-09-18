@@ -1,0 +1,58 @@
+body {
+    margin: 10px;
+    padding: 0;
+}
+
+#app {
+    display: flex;
+    flex-direction: row;
+}
+
+#plan {
+    position: relative;
+}
+
+#plan-img {
+    max-width: 600px;
+}
+
+#sidebar {
+    border-right: 1px solid rgb(246, 246, 245);
+}
+
+.sidebar-header h2 {
+    font-family: sans-serif;
+    background-color: rgb(221, 221, 221);
+    font-size: 20px;
+    padding: 10px 20px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+.workspace {
+    width: 80%;
+    display: flex;
+    justify-content: space-around;
+    padding-top: 20px;
+}
+
+.select-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 0px;
+    width: 0px;
+    background-color: rgba(240, 240, 0, 0.6);
+    border: 1px dashed red;
+}
+
+.select-close-button {
+    font-family: sans-serif;
+    font-size: 18px;
+    padding: 5px;
+    color: red;
+    cursor: pointer;
+    width: 15px;
+    z-index: 999;
+    text-align: center;
+}
