@@ -2,6 +2,8 @@ class App {
   constructor() {
     this.index = 0;
     this.currentSelection = null;
+
+    // Get any existing selections in LocalStorage and render them.
     this.selections = this.getSelections();
     this.renderSelections(this.selections);
 
@@ -12,13 +14,14 @@ class App {
     const self = this;
     this.$plan.mousedown(e => {
       e.preventDefault();
-      // Bind the move and mouseup to handle the drag and select
+      // Bind the mousemove and mouseup to handle the drag and select
       self.$plan.mousemove(self._moveSelection.bind(self));
       self.$plan.mouseup(self._endSelection.bind(self));
       self.$plan.mouseleave(self._endSelection.bind(self));
       self._startSelection(e);
     });
 
+    // Handle file uploads. Currently, it opens it in client-side. No server send.
     $('#plan-file').change(e => {
       if (e.target.files && e.target.files.length > 0) {
         const reader = new FileReader();
@@ -39,6 +42,7 @@ class App {
   }
 
   getSelections() {
+    // Get selections stored in LocalStorage
     var data = {};
     for (var i = 0; i < localStorage.length; ++i) {
       const value = JSON.parse(localStorage.getItem(localStorage.key(i)));
@@ -51,13 +55,20 @@ class App {
     const self = this, $plan = $('#plan');
     for (var id in selections) {
       const pos = selections[id];
-      $plan.append($(`<div id='selection_${id}' class='select-box'><div id='selection_close_${id}' class='select-close-button'>x</div></div>`));
+      $plan.append(this.getSelectionDiv(id, false));
       $(`#selection_${id}`).css({
         top: pos.top,
         left: pos.left,
         width: `${pos.width}px`,
         height: `${pos.height}px`,
       });
+    }
+    this.attachCloseListenersToSelections(selections);
+  }
+
+  attachCloseListenersToSelections(selections) {
+    for (var id in selections) {
+      const self = this;
       $(`#selection_close_${id}`).click(function(id) {
         return e => {
           e.preventDefault();
@@ -75,11 +86,14 @@ class App {
     }
   }
 
+  getSelectionDiv(id, hidden=true) {
+    const display = hidden ? 'none' : 'block';
+    return $(`<div id='selection_${id}' class='select-box'><div id='selection_close_${id}' class='select-close-button' style='display: ${display}'>x</div></div>`);
+  }
+
   _addSelection() {
-    const $plan = $('#plan'),
-          id = `selection_${++this.index}`,
-          closeId = `selection_close_${this.index}`,
-          $selection = $(`<div id='${id}' class='select-box'><div id='${closeId}' class='select-close-button' style='display: none'>x</div></div>`);
+    const $plan = $('#plan'), id = ++this.index,
+          $selection = this.getSelectionDiv(id);
     $plan.append($selection);
     this.$currentSelection = $selection;
   }
@@ -120,11 +134,14 @@ class App {
       };
     }(this.index));
 
-    this.saveSelection(this.index, {
-      ...this.$currentSelection.position(),
+    var selectionData = {
+      top: this.$currentSelection.position().top,
+      left: this.$currentSelection.position().left,
       width: this.$currentSelection.width(),
       height: this.$currentSelection.height(),
-    });
+    }
+    this.saveSelection(this.index, selectionData);
+
     this.$plan.unbind("mousemove");
     this.$plan.unbind("mouseup");
     this.$plan.unbind("mouseleave");

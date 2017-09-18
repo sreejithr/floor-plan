@@ -1,11 +1,12 @@
 import gulp from 'gulp';
 import gutil from 'gulp-util';
 import sass from 'gulp-sass';
+import pump from 'pump';
 import webserver from 'gulp-webserver';
 import sourcemaps from 'gulp-sourcemaps';
 import jshint from 'gulp-jshint';
 import concat from 'gulp-concat';
-import uglify from 'gulp-uglify';
+import uglify from 'gulp-uglify-es';
 import babel from 'gulp-babel';
 import browserify from 'browserify';
 import source from 'vinyl-source-stream';
@@ -43,6 +44,14 @@ gulp.task('serve', () => {
       livereload: true,
       open: true,
     }));
+});
+
+gulp.task('error', function (cb) {
+  pump([
+    gulp.src('source/js/**/*.js'),
+    uglify(),
+    gulp.dest('public/assets/js/')
+  ], cb);
 });
 
 gulp.task('watch', () => {
